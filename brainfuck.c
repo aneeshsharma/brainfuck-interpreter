@@ -34,6 +34,7 @@ int main(int argc, char** argv){
     }
 
     char* ptr = calloc(mem, sizeof(char));
+    char* base = ptr;
     char read;
     int pos = 1;
     int status = 1;
@@ -83,6 +84,7 @@ int main(int argc, char** argv){
         }
         pos++;
     }
+    free(base);
     printf("\n");
     return 0;
 }
