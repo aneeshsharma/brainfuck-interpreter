@@ -5,8 +5,6 @@
 #define MIN_MEM 32
 #define DEFAULT_MEM 2048
 
-int isCorrectFormat(FILE* program, char* allowedChars);
-int isPresent(char check, char* list);
 int main(int argc, char** argv){
     if (!(argc == 2 || argc == 3)){
         printf("\nCan't do that! Specify the program file name as follows -\n\tbrainfuck <program-to-execute> [mem_size]\nPlease try again!\n");
@@ -28,11 +26,6 @@ int main(int argc, char** argv){
         return 0;
     }
 
-    if (!isCorrectFormat(program, allowedChars)){
-        printf("\nInvalid format!\n");
-        return 0;
-    }
-
     char* ptr = calloc(mem, sizeof(char));
     char* base = ptr;
     char read;
@@ -40,9 +33,6 @@ int main(int argc, char** argv){
     int status = 1;
     printf("\n");
     while ((read = fgetc(program)) != EOF && status){
-        if (read == '\n'){
-            continue;
-        }
         switch (read){
             case '+':
                 *ptr += 1;
@@ -78,32 +68,10 @@ int main(int argc, char** argv){
                     fseek(program, 2, SEEK_CUR);
                 }
                 break;
-            default:
-                printf("Invalid code character '%c' at position - %d\n", read, pos);
-                status = 0;
         }
         pos++;
     }
     free(base);
     printf("\n");
-    return 0;
-}
-
-int isCorrectFormat(FILE* program, char* allowedChars){
-    char read;
-    while ((read = fgetc(program)) != EOF){
-        if (!(isPresent(read, allowedChars) || read == '\n'))
-            return 0;
-    }
-    fseek(program, 0, SEEK_SET);
-    return 1;
-}
-
-int isPresent(char check, char* list){
-    while (*list){
-        if (*list == check)
-            return 1;
-        list++;
-    }
     return 0;
 }
