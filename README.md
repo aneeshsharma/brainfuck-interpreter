@@ -35,3 +35,7 @@ brainfuck sample_program.bf
 ```
 
 (While in the correct directory)
+
+### Credits
+
+The hello world program is from the Wikipedia page for brainfuck - [Brainfuck on Wikipedia](https://en.wikipedia.org/wiki/Brainfuck)
