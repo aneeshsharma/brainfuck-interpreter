@@ -1,6 +1,5 @@
 # brainfuck-interpreter
-
-Yet another interpreter for brainfuck.
+An interpreter for the freakin' brainfuck langauge implemented in C (for performance reasons).
 
 ## How to install?
 
@@ -31,7 +30,7 @@ Where, `<porgram-name>` - the program to execute
 Try out the sample program given -
 
 ```
-brainfuck sample_program.bf
+brainfuck hello_world.bf
 ```
 
 (While in the correct directory)
