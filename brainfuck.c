@@ -92,7 +92,7 @@ int main(int argc, char** argv){
                 #endif
                 break;
             case ',':
-                *ptr = getc(stdout);
+                *ptr = getchar();
                 break;
             case '[':
                 if (*ptr == 0){
