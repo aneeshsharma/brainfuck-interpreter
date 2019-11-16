@@ -6,6 +6,9 @@ all:
 debug:
 	${CC} brainfuck.c -o brainfuck -DDEBUG
 
+numeric:
+	${CC} brainfuck.c -o brainfuck -DNUMBER
+
 install: all
 	sudo cp brainfuck /usr/bin/brainfuck
 	sudo chmod +x /usr/bin/brainfuck

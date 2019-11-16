@@ -7,6 +7,30 @@
 
 void display(char* array, int size, char* current);
 void showProgram(FILE* program);
+char* getProgram(FILE* program, char* allowedChars, int* length);
+int contains(char check, char* allowed);
+
+typedef struct Node {
+    struct Node* next;
+    int value;
+} Node;
+
+void push(Node** head, int data){
+    Node* new = malloc(sizeof(Node));
+    new->value = data;
+    new->next = *head;
+    *head = new;
+}
+
+int pop(Node** head){
+    if (*head == NULL)
+        return -1;
+    Node* trash = *head;
+    int res = trash->value;
+    *head = (*head)->next;
+    free(trash);
+    return res;
+}
 
 int main(int argc, char** argv){
     if (!(argc == 2 || argc == 3)){
@@ -14,7 +38,7 @@ int main(int argc, char** argv){
         return 0;
     }
 
-    char* allowedChars = "+-[]<>,.";
+    char* allowedChars = "+-[]<>,.\0";
 
     FILE* program = fopen(argv[1], "r");
     int mem = DEFAULT_MEM;
@@ -31,14 +55,20 @@ int main(int argc, char** argv){
 
     char* ptr = calloc(mem, sizeof(char));
     char* base = ptr;
+    int size, count;
+    char* code = getProgram(program, allowedChars, &size);
     char read;
-    int pos = 1;
-    int status = 1;
+    Node* stack;
+    int pos = 0;
+    #ifdef DEBUG
+        printf("\nSize : %d, Code: %s", size, code);
+    #endif
     printf("\n");
-    while ((read = fgetc(program)) != EOF && status){
+    for (pos = 0; pos < size; pos++){
+        read = code[pos];
         if (read == '\n') continue;
         #ifdef DEBUG
-            printf("inst : %c | ", read);
+            printf("inst : %c | pos : %d | ", read, pos);
             display(base, 10, ptr);
         #endif
         switch (read){
@@ -55,7 +85,7 @@ int main(int argc, char** argv){
                 ptr++;
                 break;
             case '.':
-                #ifdef DEBUG
+                #if defined(DEBUG) || defined(NUMBER)
                     printf("%d\n", *ptr);
                 #else
                     putc(*ptr, stdout);
@@ -66,29 +96,65 @@ int main(int argc, char** argv){
                 break;
             case '[':
                 if (*ptr == 0){
-                    printf("march\n");
-                    while (fgetc(program) != ']')
-                        continue;
+                    count = 1;
+                    while (count != 0){
+                        pos++;
+                        if (code[pos] == '[')
+                            count++;
+                        else if (code[pos] == ']')
+                            count--;
+                    }
+                }
+                else {
+                    push(&stack, pos);
                 }
                 break;
             case ']':
                 if (*ptr != 0){
-                    fseek(program, -1, SEEK_CUR);
-                    printf("Fallback!\n");
-                    while (read != '['){
-                        read = fgetc(program);
-                        fseek(program, -2, SEEK_CUR);
-                    }
-                    fseek(program, 2, SEEK_CUR);
+                    pos = pop(&stack);
+                    pos--;
+                }
+                else {
+                    pop(&stack);
                 }
                 break;
         }
-        pos++;
     }
     free(base);
-    fseek(program, 0, SEEK_SET);
-    showProgram(program);
     printf("\n");
+    return 0;
+}
+
+char* getProgram(FILE* program, char* allowedChars, int* length){
+    int size = 0;
+    char read;
+    while ((read = fgetc(program)) != EOF){
+        if (contains(read, allowedChars)){
+            size++;
+        }
+    }
+        
+    if (size == 0)
+        return NULL;
+    *length = size;
+    char* res = calloc(size, sizeof(char));
+    int i = 0;
+    fseek(program, 0, SEEK_SET);
+    while ((read = fgetc(program)) != EOF){
+        if (contains(read, allowedChars)){
+            res[i] = read;
+            i++;
+        }
+    }
+    return res;
+}
+
+int contains(char check, char* allowed){
+    while (*allowed != '\0'){
+        if (*allowed == check)
+            return 1;
+        allowed++;
+    }
     return 0;
 }
 
