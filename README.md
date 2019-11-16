@@ -1,6 +1,5 @@
 # brainfuck-interpreter
-
-Yet another interpreter for brainfuck.
+An interpreter for the freakin' brainfuck langauge implemented in C (for performance reasons).
 
 ## How to install?
 
